@@ -489,7 +489,6 @@ macro "Multiple Wound healing size Tool - N66C000C111C222C333C444C555C666C777C88
    roiManager("Show None");
    close();
 
-   for (n = 0; n < num_wounds; n++){ //for loop: how many wounds to find/count; SW
    if (roiManager("count") <= 1 || roiManager("count") < num_wounds) //if user selection is too many or there is only one ROI option...; SW
    {
        roiManager("select", 0);
@@ -524,7 +523,7 @@ macro "Multiple Wound healing size Tool - N66C000C111C222C333C444C555C666C777C88
         }
     }
    }
-
+for (n = 0; n < num_wounds; n++){ //for loop: how many wounds to find/count; SW
    roiManager("select", index[n]); //select n largest based on loop; SW
    roiName = getTitle() + "-" + (index[n] + 1) + "-" + (n + 1); //Name that shows up in the results tab. (image name, roi #, and which loop iteration you are on); SW
    
@@ -557,14 +556,14 @@ macro "Multiple Wound healing size Tool - N66C000C111C222C333C444C555C666C777C88
    title_image=getTitle();
   
    // Printing Results
-   setResult("Label", n, roiName);
-   setResult("Area "+unit+"^2", n, area);
-   setResult("Area %", n, area_fraction);
-   setResult("Avg. Width"+unit, n, avg_width);
-   setResult("Standard deviation "+unit, n, std_dist);
+   in = getValue("results.count");
+   setResult("Label", in, roiName);
+   setResult("Area "+unit+"^2", in, area);
+   setResult("Area %", in, area_fraction);
+   setResult("Avg. Width"+unit, in, avg_width);
+   setResult("Standard deviation "+unit, in, std_dist);
    
    scale_fixed(scale);
-   setTool("rectangle");
    updateResults();
    }
    roiManager("Show All");
