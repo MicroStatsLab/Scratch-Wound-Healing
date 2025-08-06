@@ -9,6 +9,7 @@ var ort = "No";
 var scale = "No";
 var diagonal= "No";
 var num_wounds = 1; // Default is one;
+var num_wounds = 1; // Default is one;
 
 // ----------------------------------------------------------------------------------------------------------------------
 // Auxiliary functions
@@ -525,7 +526,7 @@ macro "Multiple Wound healing size Tool - N66C000C111C222C333C444C555C666C777C88
    }
 for (n = 0; n < num_wounds; n++){ //for loop: how many wounds to find/count; SW
    roiManager("select", index[n]); //select n largest based on loop; SW
-   roiName = getTitle() + "-" + (index[n] + 1) + "-" + (n + 1); //Name that shows up in the results tab. (image name, roi #, and which loop iteration you are on); SW
+   roiName = getTitle() + "-" + (index[n] + 1 + 1) + "-" + (n + 1); //Name that shows up in the results tab. (image name, roi #, and which loop iteration you are on); SW
    
    reset();
    setupUndo();
