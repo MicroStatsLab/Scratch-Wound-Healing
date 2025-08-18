@@ -579,6 +579,57 @@ macro "Manual Measurements Tool - C000D2bD5bDe7C000D28D58D84C000D3bD4bD87D88C000
    run("Set Measurements...", "area standard display label redirect=None decimal=3");
 }
 
+macro "ROI Select Tool - C358Dc2C9acD1cD47D59D6cD72Db6Db7Dc4C89bD01D0aD10D4aD58D64D70CdddD5bD62DaaDe1C68aD0fCbccD28D6aD92Dd9C9abD2aCeeeD38D45D5dD73D74D80D81D82D83D84D85D87D88D89D8aD8bD90D91D93D94D95D97D98D99D9aD9bD9cD9dD9eD9fDa7Da9DabDacDadDaeDc9DfeC67aD02D04D07D0bD30DefCabcD8fC9abD17D1dD2fD31D34D46D50D67D79D7eDa2Da5Db3Db9Dc3DceDd2De5Df6CdddD4dD8eDa8DafC79aD1eD3dDb4DbdDeeCccdD41De6DecDf2C9abD11D24D27D3eD69Da1DbfDd8DdfDebC579Dc6DdaDe8CabcD12D6fD8cDbeDdeDedDf5C8abD29D43DbaDbcDe3Df9CdddD21D3aD66D78D96Db1Dc5C78aD7aDb8CccdDf7C9abD15DfbC68aD09D7fDfcCbbcD51DbbDc1Df4CdeeDd3C89bD0cD18D1aD20D2eD32D5fD7dDcaCcddD13D25Da4Db5DfdC579D06D08D19D60Df0CaacD3bC89bD23D2cD5aD65D68D6bD7cDa6Dd1Dd5DeaDf1DffC78aD05D14D22D35D36D42D44D57D63D76Dc8Dd4Dd7De2DfaCbcdD1fD3fD54De7C68aD0dD0eD5eDb0Dc0DdcDddCabcD26D3cD48D6eDd6DdbDe9CddeD2dD75D7bD86D8dDa0Da3C79bD16D4eD5cDb2CcddD77Dc7DcbC57aD49Dd0CccdD33D37D4fD52D55D6dDccDcfC469D03D40De0CbccD2bD53DcdDf3C68aD4bC579D1bD39D4cD61CabcD56D71De4Df8C469D00"
+{
+   getPixelSize(unit, pw, ph);
+   roiVal = 1;
+    Dialog.create("Multiple wound healing size options");
+    Dialog.addNumber("Which ROI would you like to select?", roiVal);
+
+    Dialog.show();
+    
+    roiVal = Dialog.getNumber();
+    
+    roiManager("select", roiVal - 1);
+    roiManager("Set Color", "purple");
+    roiName = getTitle() + "-" + roiVal + "-" + "m"; //Name that shows up in the results tab. (image name, roi #, and which loop iteration you are on); SW
+   
+   // Calculations
+   Roi.getContainedPoints(xpoints, ypoints);
+   min_x = edge_min_coordinates(xpoints);
+   max_x = edge_max_coordinates(xpoints);
+   diff_vec = diff_arrays(max_x , min_x);
+
+   Array.getStatistics(diff_vec, low, high, avg_width, std_dist);
+    
+   List.setMeasurements;  
+   angle = List.getValue("Angle");
+   correct_angle = diagonal_fixed(diagonal, angle);
+   
+   avg_width = (avg_width*pw)*correct_angle; //average wound width; SW
+   std_dist = (std_dist*pw); //std of the wound width (from my understanding); SW
+
+   run("Set Scale...", "distance=1 known="+pw+" unit=" + unit);
+   run("Set Measurements...", "redirect=None decimal=3");
+   getStatistics(area, mean, min, max, std, histogram);
+   height_total=getHeight()*pw;
+   width_total=getWidth()*pw;
+   total_area=(height_total*width_total);
+   area_fraction=(area/total_area)*100;
+   title_image=getTitle();
+  
+   // Printing Results
+   in = getValue("results.count");
+   setResult("Label", in, roiName );
+   setResult("Area "+unit+"^2", in, area);
+   setResult("Area %", in, area_fraction);
+   setResult("Avg. Width"+unit, in, avg_width);
+   setResult("Standard deviation "+unit, in, std_dist);
+   
+   scale_fixed(scale);
+   updateResults();
+}
+
 // ----------------------------------------------------------------------------------------------------------------------
 macro 'User defined background'
 {
